@@ -42,13 +42,13 @@ public class GangWars {
 		}
 	}
 
-	public static ArrayList<ArrayList<String>> findValues() throws FileNotFoundException{
+	public static List<ArrayList<ArrayList<String>>> findValues() throws FileNotFoundException{
 		Scanner s = new Scanner (new File("/Users/shruti5488/Documents/JAVA/JavaPractice/GangWars/src/input.txt"));
 		List<String> lines = new ArrayList<String>();
 		while(s.hasNext()){
 			lines.add(s.nextLine());
 		}
-		
+
 		Iterator<String> itr = lines.iterator();
 		matrix_size = Integer.parseInt(itr.next());
 		run_type =  itr.next();
@@ -57,18 +57,18 @@ public class GangWars {
 
 		String[] line_value;
 		List<String> value;
-		ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<String>> matrix = new ArrayList<ArrayList<String>>();
 		int line_number = 4;
 		for (int i = 0; i<matrix_size;i++){
 			line_value = lines.get(line_number).split(" ");
 			line_number ++ ;
 			value = Arrays.asList(line_value);
-			
+
 			for (int j=0;j<matrix_size;j++){	
-				matrix.add(new ArrayList<Integer>());
-				matrix.get(i).add(Integer.parseInt(value.get(j)));
+				matrix.add(new ArrayList<String>());
+				matrix.get(i).add(value.get(j));
 			}
-//			System.out.println(matrix.get(i));
+			//			System.out.println(matrix.get(i));
 		}
 		ArrayList<ArrayList<String>> turn_value = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i<matrix_size;i++){
@@ -76,54 +76,58 @@ public class GangWars {
 			value = Arrays.asList(line_value);
 			ArrayList<String> row = new ArrayList<String>();
 			for (int j=0;j<matrix_size;j++){
-//				turn_value.add(new ArrayList<String>());
-				
+				//				turn_value.add(new ArrayList<String>());
+
 				row.add(value.get(j));
 				if (row.get(j).equals(".")){
 					count ++;
 				}
 			}
 			turn_value.add(row);
-//			System.out.println(turn_value.get(i));
+			//			System.out.println(turn_value.get(i));
 			line_number ++ ;
 		}
-		
-//		System.out.println("count"+count);		
-		return turn_value;
+		List<ArrayList<ArrayList<String>>> values = new ArrayList<ArrayList<ArrayList<String>>>();
+		values.add(0, turn_value);
+		values.add(1, matrix);
+		//		System.out.println("count"+count);		
+		return values;
 	}
-	
-	
-//	public static ArrayList<String> try_value(ArrayList<String> turn_value_row){
-//		String check = first_turn;
-//		int c = 0;
-//		for ( int r=0;r<matrix_size;r++) {
-//			if ( turn_value_row.get(r).contains(".")) {
-//				turn_value_row.set(r, check);
-//				break;
-//			}
-//		}
-//		first_turn = player_value(check);
-//		return turn_value_row;
-//	}
 
-	
+
+	//	public static ArrayList<String> try_value(ArrayList<String> turn_value_row){
+	//		String check = first_turn;
+	//		int c = 0;
+	//		for ( int r=0;r<matrix_size;r++) {
+	//			if ( turn_value_row.get(r).contains(".")) {
+	//				turn_value_row.set(r, check);
+	//				break;
+	//			}
+	//		}
+	//		first_turn = player_value(check);
+	//		return turn_value_row;
+	//	}
+
+
 	public static void printTree(Tree tree_root, String appender) {
 		System.out.println(appender + tree_root.getId());
 		for (Tree each: tree_root.getChildren()){
 			printTree(each, appender+appender);
 		}
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		Tree tree = null ;
-		ArrayList<ArrayList<String>> board_value = findValues();
+		ArrayList<ArrayList<String>> board_turn = findValues().get(0);
+		ArrayList<ArrayList<String>> board_value = findValues().get(1);
 		Tree tree_root = new Tree(null, matrix_size, first_turn, depth);
-		
+
 		int count = tree.count_space(board_value, matrix_size);
-		
-		tree_root = tree.create_tree (tree_root, board_value, count);
-		
-		printTree(tree_root, " ");	
+
+		tree_root = tree.create_tree (tree_root, board_turn, count);
+		tree_root = tree.play_board(tree_root, board_value, " ");
+		System.out.println(tree_root.getChildren().size());
+//		printTree(tree_root, " ");	
 	}
 }
 
