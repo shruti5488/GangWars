@@ -110,24 +110,27 @@ public class GangWars {
 
 
 	public static void printTree(Tree tree_root, String appender) {
-		System.out.println(appender + tree_root.getId());
+		System.out.println(appender + tree_root.getScores());
 		for (Tree each: tree_root.getChildren()){
 			printTree(each, appender+appender);
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws IOException {
 		Tree tree = null ;
 		ArrayList<ArrayList<String>> board_turn = findValues().get(0);
 		ArrayList<ArrayList<String>> board_value = findValues().get(1);
-		Tree tree_root = new Tree(null, matrix_size, first_turn, depth);
-
+		Tree tree_root = new Tree(null, matrix_size, first_turn, depth, board_value);
+		Tree tree_root_points = new Tree(null, matrix_size, first_turn, depth, board_value);
+		
 		int count = tree.count_space(board_value, matrix_size);
 
 		tree_root = tree.create_tree (tree_root, board_turn, count);
-		tree_root = tree.play_board(tree_root, board_value, " ");
-		System.out.println(tree_root.getChildren().size());
-//		printTree(tree_root, " ");	
+		int util_value = tree.calculate_utility(board_value, tree_root.getId());
+		tree_root_points = tree.create_points(tree_root_points, tree_root, board_turn, util_value);
+		tree.play_board(tree_root, tree_root_points);
+//		printTree(tree_root_points, " ");	
 	}
 }
 
